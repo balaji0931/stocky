@@ -23,9 +23,12 @@ Stocky is a production-ready AI investment research agent. Rather than acting as
 6. [Repository Structure](#6-repository-structure)
 7. [API Design & Documentation](#7-api-design--documentation)
 8. [Challenges & Engineering Mitigations](#8-challenges--engineering-mitigations)
-9. [Production Readiness & Deployment Guide](#9-production-readiness--deployment-guide)
-10. [Screenshots](#10-screenshots)
-11. [AI Usage Report](#11-ai-usage-report)
+9. [How to Run & Setup (Local Development)](#9-how-to-run--setup-local-development)
+10. [Production Readiness & Deployment Guide](#10-production-readiness-deployment-guide)
+11. [Screenshots](#11-screenshots)
+12. [What We Would Improve With More Time](#12-what-we-would-improve-with-more-time)
+13. [AI Usage Report](#13-ai-usage-report)
+14. [AI Development Logs](#14-ai-development-logs)
 
 ---
 
@@ -432,7 +435,51 @@ Stocky/
 
 ---
 
-## 9. Production Readiness & Deployment Guide
+## 9. How to Run & Setup (Local Development)
+
+### Prerequisites
+* **Node.js** (v18 or higher recommended)
+* **npm** (v9 or higher)
+* Git
+
+### Step-by-Step Local Setup
+
+1. **Clone the Repository:**
+   ```bash
+   git clone https://github.com/balaji0931/stocky.git
+   cd stocky
+   ```
+
+2. **Configure Backend Environment Variables:**
+   Create a `.env` file inside the `server/` directory:
+   ```env
+   # server/.env
+   FMP_API_KEY=your_financial_modeling_prep_key_here
+   OPENROUTER_API_KEY=your_openrouter_api_key_here
+   PORT=3001
+   NODE_ENV=development
+   ```
+
+3. **Install & Run Backend (Express Server):**
+   ```bash
+   cd server
+   npm install
+   npm run dev
+   ```
+   *The server will start running locally at http://localhost:3001.*
+
+4. **Install & Run Frontend (React Client):**
+   Open a separate terminal window and navigate to the `client/` directory:
+   ```bash
+   cd client
+   npm install
+   npm run dev
+   ```
+   *Vite will compile and run the frontend dashboard at http://localhost:5173. Requests to `/api/*` will be proxied automatically to the backend running on port 3001.*
+
+---
+
+## 10. Production Readiness & Deployment Guide
 
 ### 1. Environment-Aware Logging (`server/src/utils/logger.ts`)
 * In development, the terminal displays live details for each graph step to assist debugging.
@@ -467,7 +514,7 @@ Stocky/
 
 ---
 
-## 10. Screenshots
+## 11. Screenshots
 
 ### Search Page
 ![Search Page](screenshots/landing.png)
@@ -489,13 +536,24 @@ Stocky/
 
 ---
 
-## 11. AI Usage Report
+## 12. What We Would Improve With More Time
+
+Given more time, we would implement the following feature improvements:
+1. **Parallel Graph Nodes Execution:** Run the `News & Sentiment` and `Qualitative Industry Analysis` nodes in parallel rather than sequentially, as they do not depend on each other's outputs. This would reduce analysis wait time by ~30%.
+2. **DCF Valuation Engine:** Build a fully automated Discounted Cash Flow (DCF) model node to calculate an intrinsic value estimate rather than relying only on relative multiples (P/E).
+3. **Analyst Consensus Aggregation:** Incorporate web scraping or additional financial API calls to aggregate target prices and ratings from major institutional analysts (e.g. Wall Street consensus).
+4. **Historical Trend Visualizations:** Add charts to the UI dashboard showing 4-year trends for key financial statement lines (Revenue, Net Income, Margins, Debt) rather than just listing static numbers.
+5. **Interactive Q&A side panel:** Allow the user to ask follow-up questions about the company's report using the loaded research as the retrieval context.
+
+---
+
+## 13. AI Usage Report
 
 AI was extensively used during development for architecture exploration, LangGraph workflow design, prompt engineering, debugging, TypeScript implementation assistance, UI refinement, and documentation. Every generated implementation was reviewed, tested, modified, and integrated manually.
 
 ---
 
-## 12. AI Development Logs
+## 14. AI Development Logs
 
 As requested in the assignment, this project includes the [ai-development-log.md](file:///Users/balajinayakbardawal/Learnings/AI_application_development/Stocky/llm-chat-logs/ai-development-log.md) file inside the `llm-chat-logs/` directory. This serves as a curated developer log highlighting the engineering milestones, conversation summaries, and key architectural decisions made throughout our development lifecycle.
 
