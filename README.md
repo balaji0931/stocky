@@ -470,19 +470,22 @@ Stocky/
 ## 10. Screenshots
 
 ### Search Page
-*Place for Search Page screenshot*
+![Search Page](screenshots/landing.png)
 
-### Investment Dashboard
-*Place for Investment Dashboard screenshot*
+### Loading Analysis
+![Loading Analysis](screenshots/loading.png)
 
-### Score Breakdown
-*Place for Score Breakdown screenshot*
+### Recommendation & Dashboard (Part 1)
+![Recommendation & Dashboard](screenshots/dashboard1.png)
 
-### Recommendation
-*Place for Recommendation Card screenshot*
+### Financial Metrics (Part 2)
+![Financial Metrics](screenshots/dashboard2.png)
 
-### News Analysis
-*Place for News & Sentiment screenshot*
+### Sentiment & Moat Analysis (Part 3)
+![Moat Analysis](screenshots/dashboard3.png)
+
+### Score Breakdown & Risks (Part 4)
+![Score Breakdown](screenshots/dashboard5.png)
 
 ---
 
