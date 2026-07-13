@@ -1,0 +1,79 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@theme {
+  --color-bg-primary: hsl(225, 44%, 5%);
+  --color-bg-card: hsl(225, 36%, 9%);
+  --color-bg-card-hover: hsl(225, 32%, 13%);
+  --color-bg-input: hsl(225, 40%, 7%);
+  --color-bg-elevated: hsl(225, 36%, 11%);
+
+  --color-border: hsl(225, 25%, 18%);
+  --color-border-subtle: hsl(225, 20%, 14%);
+
+  --color-text-primary: hsl(210, 40%, 98%);
+  --color-text-secondary: hsl(215, 18%, 62%);
+  --color-text-muted: hsl(215, 14%, 40%);
+
+  --color-accent: hsl(250, 90%, 65%);
+  --color-accent-hover: hsl(250, 85%, 72%);
+
+  --color-buy: hsl(152, 68%, 48%);
+  --color-buy-bg: hsl(152, 68%, 48%, 0.08);
+  --color-hold: hsl(42, 90%, 56%);
+  --color-hold-bg: hsl(42, 90%, 56%, 0.08);
+  --color-sell: hsl(0, 72%, 58%);
+  --color-sell-bg: hsl(0, 72%, 58%, 0.08);
+
+  --color-score-low: hsl(0, 72%, 58%);
+  --color-score-mid: hsl(42, 90%, 56%);
+  --color-score-high: hsl(152, 68%, 48%);
+
+  --color-positive: hsl(152, 68%, 48%);
+  --color-negative: hsl(0, 72%, 58%);
+  --color-neutral: hsl(215, 18%, 62%);
+}
+
+html {
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Only keyframes — Tailwind doesn't generate these */
+@keyframes score-fill {
+  from { stroke-dashoffset: 283; }
+}
+.score-ring {
+  animation: score-fill 1.5s ease-out forwards;
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fade-in-up 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes pulse-glow-kf {
+  0%, 100% { box-shadow: 0 0 24px rgba(99,102,241,0.08); }
+  50% { box-shadow: 0 0 48px rgba(99,102,241,0.2); }
+}
+.pulse-glow {
+  animation: pulse-glow-kf 2.5s ease-in-out infinite;
+}
+
+.animate-delay-1 { animation-delay: 0.05s; }
+.animate-delay-2 { animation-delay: 0.10s; }
+.animate-delay-3 { animation-delay: 0.15s; }
+.animate-delay-4 { animation-delay: 0.20s; }
+.animate-delay-5 { animation-delay: 0.25s; }
+.animate-delay-6 { animation-delay: 0.30s; }
+.animate-delay-7 { animation-delay: 0.35s; }
+.animate-delay-8 { animation-delay: 0.40s; }
