@@ -1,125 +1,162 @@
 # Stocky — AI Development Log
 
-This document summarizes the AI-assisted development process and key engineering discussions that occurred while building Stocky. It highlights the architectural decisions, code-evolution, debugging workflows, and lessons learned during the 7-day development lifecycle.
+This document records the AI-assisted development process followed while building **Stocky**. It focuses on the engineering decisions, design iterations, debugging process, architectural trade-offs, and lessons learned throughout the project. It is intended to accompany the README and demonstrate how AI was used as an engineering assistant during development.
+
+> **Note:** This document is a development log, not a verbatim export of every AI conversation. It captures the major technical discussions and the resulting implementation decisions.
 
 ---
 
 ## 1. Initial Architecture
 
-### The Context
-The task was to build an AI Investment Research Agent using React/Next.js for the frontend, Node.js for the backend, and LangChain.js/LangGraph.js for the AI workflow orchestration.
+### Context
+The assignment required an AI Investment Research Agent using React/Next.js, Node.js and LangChain/LangGraph.
 
-### Key Discussions & Decisions
-We discussed whether to build a Next.js monorepo or keep the frontend and backend decoupled. We decided to build a **decoupled architecture**:
-* **Frontend:** React (Vite) + TypeScript for speed, rapid HMR, and clean production builds.
-* **Backend:** Express + TypeScript to serve as the API hosting our LangGraph workflow.
-* **Communication:** Standard REST API (`POST /api/analyze` and `GET /api/search`).
+### Final Decision
+- React (Vite) + TypeScript frontend
+- Express + TypeScript backend
+- LangGraph orchestration
+- REST communication
 
-By separating the client and server codebases, we simplified Vercel frontend deployments and decoupled hosting configurations on Render/Railway.
+Why:
+- Independent deployment
+- Faster frontend development
+- Clear separation of concerns
 
 ---
 
 ## 2. LangGraph Workflow
 
-### The Context
-Rather than executing a single, massive LLM prompt to research and decide on an investment, the application mandated a structured agent workflow.
+Rather than relying on one large prompt, the application was designed as a 7-stage pipeline:
 
-### Key Discussions & Decisions
-We mapped out a **7-node sequential graph** to isolate concerns and prevent token context inflation.
+1. Input Parser
+2. Company Lookup
+3. Financial Research
+4. News Research
+5. Industry Analysis
+6. Deterministic Scoring
+7. Final Recommendation
 
-```mermaid
-graph TD
-    START([START]) --> N1[1. Input Parser]
-    N1 --> N2[2. Company Lookup]
-    N2 --> N3[3. Financial Research]
-    N3 --> N4[4. News & Sentiment]
-    N4 --> N5[5. Industry Analysis]
-    N5 --> N6[6. Investment Scoring]
-    N6 --> N7[7. Final Recommendation]
-    N7 --> END([END])
-```
-
-* **State Isolation:** Each node reads only from a typed `InvestmentState` annotation and returns partial state overrides.
-* **Modularity:** Isolating news fetching from financial statement lookups allowed us to implement granular try/catch blocks so that if news fails, the financial calculations still run.
+Reasons:
+- Smaller prompts
+- Better maintainability
+- Easier debugging
+- Fault isolation
 
 ---
 
 ## 3. Deterministic Scoring
 
-### The Context
-How do we grade a stock? Letting an LLM guess a score based on raw text is a "black box" that results in inconsistent, non-explainable scores.
+A hybrid scoring approach was adopted.
 
-### Key Discussions & Decisions
-We implemented a **hybrid scoring mechanism**:
-* **Quantitative (60%):** Calculated through strict TypeScript algorithms. For instance, P/E multiples, debt-to-equity leverage, and YoY revenue growth are parsed and assigned points based on mathematical thresholds.
-* **Qualitative (40%):** The LLM assesses moats, competitive positions, and news risks, mapping them to normalized 0-20 scores.
-* **Verdict Alignment:** The final decision (BUY/HOLD/SELL) is mapped directly from the cumulative score. The LLM cannot override mathematical metrics.
+Deterministic:
+- Revenue Growth
+- Operating Margin
+- Debt
+- Liquidity
+- Valuation
+
+LLM:
+- Business Quality
+- Competitive Position
+- Risks
+- Final Thesis
+
+Reason:
+Numeric scores remain reproducible while qualitative analysis benefits from LLM reasoning.
 
 ---
 
 ## 4. Financial APIs
 
-### The Context
-We needed reliable company profile, balance sheet, and news endpoints.
+Primary provider:
+- Financial Modeling Prep
 
-### Key Discussions & Decisions
-* **API Integration:** Integrated **Financial Modeling Prep (FMP)** as our core financial data provider.
-* **Fallback Layer:** Set up **Finnhub** as a fallback API for search queries, profiles, and company news to ensure high availability.
-* **Caching Layer:** Implemented an in-memory TTL cache (`server/src/services/cache.ts`) to cache profile and financial responses for 24 hours. This reduces external API calls and keeps operations within free-tier quotas.
+Additional improvements:
+- Finnhub integration
+- Fallback handling
+- 24-hour in-memory cache
+
+Reason:
+Increase reliability while staying within free-tier limits.
 
 ---
 
-## 5. LLM Provider Migration (Gemini → OpenRouter)
+## 5. LLM Migration
 
-### The Context
-Initially, the backend was configured to use the Gemini API directly. However, we quickly encountered tight Rate-Per-Minute (RPM) and Rate-Per-Day (RPD) limits on the free tier.
+Initial provider:
+- Gemini
 
-### Key Discussions & Decisions
-* **The Problem:** Direct `@langchain/google-genai` integration returned frequent `429 Quota Exceeded` errors during iterative testing.
-* **The Migration:** We migrated the LLM client wrapper in `llm.ts` to utilize the **OpenRouter API** with the free model `google/gemini-2.0-flash-lite:free`. This resolved rate-limiting bottlenecks while maintaining the same performance and output format.
-* **JSON Integrity:** Added robust JSON parsing utility functions to strip markdown code fences (` ```json `) and sanitize incoming strings before running `JSON.parse`.
+Issue:
+Repeated quota (429) errors.
+
+Final provider:
+- OpenRouter
+
+Additional work:
+- JSON sanitization
+- Markdown fence removal
+- Robust parsing
 
 ---
 
 ## 6. UI Refinement
 
-### The Context
-Our initial landing page and dashboard layout felt cramped, lacked visual separation, and contained several design issues.
+Major improvements:
+- Single scrolling report
+- Better dashboard hierarchy
+- Smaller score gauge
+- Improved spacing
+- Standardized cards
 
-### Key Discussions & Decisions
-* **Tab-to-Scroll Migration:** Replaced the initial tabbed interface with a clean, unified scrolling dashboard report.
-* **Visual Proportions:** Moved the **Financials card** directly to the sidebar underneath the **Score Gauge**, placing it adjacent to the **Thesis / Recommendation** card to create a balanced layout.
-* **Gauge Scaling:** Reduced the circular SVG `ScoreGauge` size from `w-40 h-40` to `w-28 h-28` to maintain proportion inside the card.
-* **CSS Cleanup:** Replaced the unused, un-compiled `glass-card` classes with Tailwind-defined tokens (`bg-bg-card border border-border rounded-2xl`).
+Goal:
+Present the output as a professional investment report.
 
 ---
 
 ## 7. Production Readiness
 
-### The Context
-Transitioning to deployment required silencing debug logs, eliminating unused code, and securing cross-domain communication.
-
-### Key Discussions & Decisions
-* **Centralized Logger:** Created `server/src/utils/logger.ts` to silence non-critical execution logs in production (`NODE_ENV === "production"`) while keeping `logger.error` active.
-* **Uptime Keep-Alive Route:** Created a direct `GET /ping` route that immediately returns `"pong"` without starting LLM pipelines. This enables third-party keep-alive checks to prevent Render/Railway server sleep cycles.
-* **Vercel API URLs:** Updated the client API layer to fetch from `import.meta.env.VITE_API_URL`, supporting CORS deployments.
+Implemented:
+- Centralized logger
+- Production log suppression
+- /ping health endpoint
+- Environment-based API URLs
+- Build verification
+- Code cleanup
 
 ---
 
 ## 8. Documentation
 
-### The Context
-Preparing the project for evaluation by Altuni AI Labs reviewers.
-
-### Key Discussions & Decisions
-* Rebuilt the main `README.md` to cleanly outline the architecture, mathematical scoring rules, prompt structure, challenges, and setup instructions.
-* Excluded internal LaTeX layout scripts and raw prompt text walls to ensure clean readability.
-* Added screenshot placeholders and live links.
+Expanded documentation includes:
+- Architecture
+- Scoring methodology
+- API documentation
+- Engineering decisions
+- Trade-offs
+- Deployment
+- Example runs
 
 ---
 
 ## 9. Lessons Learned
 
-1. **Decouple Math from GenAI:** Utilizing deterministic rules to compute scores, while leaving context-building and synthesis to the LLM, delivers highly reliable results.
-2. **Design for API Constraints:** Layering caches and fallback APIs is essential when building prototypes on free-tier rate limits.
-3. **Structured Outputs are Fragile:** Even with strict JSON prompt guidelines, LLMs occasionally return markdown enclosures. Sanitation utilities (strippers and brackets extractors) must always wrap JSON parser inputs.
+- Deterministic calculations improve consistency.
+- LangGraph simplifies multi-step AI workflows.
+- API fallbacks and caching improve robustness.
+- Production polish matters as much as functionality.
+
+---
+
+## AI Usage Summary
+
+AI assisted throughout development in:
+- Architecture exploration
+- LangGraph workflow design
+- Prompt engineering
+- API integration
+- Debugging
+- OpenRouter migration
+- UI refinement
+- Documentation
+
+All implementation decisions were reviewed, tested, and integrated into the final application before submission.

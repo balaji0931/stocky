@@ -497,11 +497,7 @@ AI was extensively used during development for architecture exploration, LangGra
 
 ## 12. AI Development Logs
 
-As requested in the assignment, this project includes a [llm-chat-logs/](file:///Users/balajinayakbardawal/Learnings/AI_application_development/Stocky/llm-chat-logs) directory containing:
-* [ai-development-log.md](file:///Users/balajinayakbardawal/Learnings/AI_application_development/Stocky/llm-chat-logs/ai-development-log.md): A human-readable curated summary of the engineering milestones and key decisions made throughout our development lifecycle.
-* `transcript.jsonl` / `transcript_full.jsonl`: The raw, programmatically generated transcript logs representing the complete conversation history.
-
-These logs illustrate the development process and engineering decisions taken while building Stocky.
+As requested in the assignment, this project includes the [ai-development-log.md](file:///Users/balajinayakbardawal/Learnings/AI_application_development/Stocky/llm-chat-logs/ai-development-log.md) file inside the `llm-chat-logs/` directory. This serves as a curated developer log highlighting the engineering milestones, conversation summaries, and key architectural decisions made throughout our development lifecycle.
 
 ---
 
