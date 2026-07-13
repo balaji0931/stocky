@@ -8,9 +8,9 @@ Stocky is a production-ready AI investment research agent. Rather than acting as
 
 ---
 
-## 🔗 Live Demo (Placeholders)
-* **Frontend:** [https://stocky-client.vercel.app](https://stocky-client.vercel.app)
-* **Backend:** [https://stocky-server.railway.app](https://stocky-server.railway.app)
+## 🔗 Live Demo
+* **Frontend:** [https://stocky-aiapp.vercel.app](https://stocky-aiapp.vercel.app)
+* **Backend:** [https://stocky-ysfs.onrender.com](https://stocky-ysfs.onrender.com)
 
 ---
 
