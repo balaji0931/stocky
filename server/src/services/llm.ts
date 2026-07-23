@@ -1,7 +1,7 @@
 import { env } from "../config.js";
 import { logger } from "../utils/logger.js";
 
-const MODEL_NAME = process.env.OPENROUTER_MODEL || "google/gemini-2.0-flash-lite:free";
+const MODEL_NAME = process.env.OPENROUTER_MODEL || "openrouter/free";
 
 logger.log(`🤖 LLM Provider: OpenRouter | Model: ${MODEL_NAME}`);
 
